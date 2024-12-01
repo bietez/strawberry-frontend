@@ -1,0 +1,43 @@
+/* src/components/Navbar.css */
+
+/* Estilo para tornar o Navbar responsivo e fixo no desktop */
+
+.navbar {
+    position: relative;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  /* Estilo para garantir que o menu fica fixo no topo em telas grandes */
+  @media (min-width: 992px) {
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+  
+  /* Ajustes para garantir que o dropdown funcione bem em dispositivos móveis */
+  .navbar-toggler {
+    border: none;
+    outline: none;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+  }
+  
+  .dropdown-menu {
+    background-color: #f8f9fa;
+  }
+  
+  .nav-item.dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+  
+  /* Ajuste de altura do body para evitar sobreposição pelo menu fixo em telas grandes */
+  body {
+    padding-top: 56px;
+  }
+  

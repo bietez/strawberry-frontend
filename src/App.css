@@ -36,3 +36,60 @@
     transform: rotate(360deg);
   }
 }
+
+/* src/App.css */
+
+html, body {
+  background-color: #121212;
+  color: #ffffff;
+  height: 100%;
+  overflow: auto;
+}
+
+a {
+  color: #0d6efd;
+}
+
+a:hover {
+  color: #0a58ca;
+  text-decoration: none;
+}
+
+.form-control {
+  background-color: #343a40;
+  color: #ffffff;
+  border: 1px solid #495057;
+}
+
+.form-control:focus {
+  background-color: #343a40;
+  color: #ffffff;
+  border-color: #0d6efd;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.card {
+  background-color: #212529;
+  border: none;
+}
+
+.card-footer {
+  background-color: #212529;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: rgba(255, 255, 255, 1);
+}
