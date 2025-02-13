@@ -1,0 +1,39 @@
+/* Lancamentos.module.css */
+
+.container {
+    padding: 20px;
+  }
+  
+  .checkboxItem,
+  .toggleItem {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    margin-top: 4px;
+  }
+  
+  /* Classes de indentação para até 5 níveis */
+  .indentLevel0 {
+    margin-left: 0 !important;
+  }
+  .indentLevel1 {
+    margin-left: 20px !important;
+  }
+  .indentLevel2 {
+    margin-left: 40px !important;
+  }
+  .indentLevel3 {
+    margin-left: 60px !important;
+  }
+  .indentLevel4 {
+    margin-left: 80px !important;
+  }
+  .indentLevel5 {
+    margin-left: 100px !important;
+  }
+  
+  /* Para garantir que os modais permitam clique */
+  :global(.modal-content) {
+    pointer-events: auto !important;
+    z-index: 9999 !important;
+  }
+  

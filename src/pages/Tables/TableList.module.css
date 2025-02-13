@@ -1,0 +1,171 @@
+:root {
+  /* Cores usadas no layout claro */
+  --border-color: #ccc;
+  --bg-success-light: #d4edda; /* livre */
+  --bg-danger-light: #f8d7da;  /* ocupada */
+  --bg-warning-light: #fff3cd; /* reservada */
+  --bg-default-light: #fff;
+
+  /* Cores usadas no layout escuro */
+  --bg-success-dark: #375B41;  /* livre */
+  --bg-danger-dark: #5B3739;   /* ocupada */
+  --bg-warning-dark: #5B5437;  /* reservada */
+  --bg-default-dark: #444;
+}
+
+/* Container principal onde as mesas são soltas */
+.dropContainer {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  border: 2px solid #ddd;
+  background-color: #f0f0f0;
+  overflow: auto;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+}
+
+.dropContainerDark {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  border: 2px solid #444;
+  background-color: #333;
+  overflow: auto;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.5) 1px, transparent 1px),
+    linear-gradient(rgba(0, 0, 0, 0.5) 1px, transparent 1px);
+}
+
+/* Componente de mesa arrastável */
+.draggableTable {
+  position: absolute;
+  border: 2px solid var(--border-color);
+  text-align: center;
+  user-select: none;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  transition: opacity 0.2s ease, border-color 0.3s, background-color 0.3s;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.circularTable {
+  border-radius: 50%;
+}
+
+.squareTable {
+  border-radius: 8px;
+}
+
+.draggableTableDragging {
+  opacity: 0.5;
+}
+
+/* Cores do background dependendo do status no modo claro */
+.bgFreeLight {
+  background-color: var(--bg-success-light);
+}
+
+.bgOccupiedLight {
+  background-color: var(--bg-danger-light);
+}
+
+.bgReservedLight {
+  background-color: var(--bg-warning-light);
+}
+
+.bgDefaultLight {
+  background-color: var(--bg-default-light);
+}
+
+/* Cores do background dependendo do status no modo escuro */
+.bgFreeDark {
+  background-color: var(--bg-success-dark);
+}
+
+.bgOccupiedDark {
+  background-color: var(--bg-danger-dark);
+}
+
+.bgReservedDark {
+  background-color: var(--bg-warning-dark);
+}
+
+.bgDefaultDark {
+  background-color: var(--bg-default-dark);
+}
+
+/* Handle de redimensionamento para mesas quadradas */
+.resizeHandle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+  background-color: #666;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+/* Handle de redimensionamento para mesas redondas */
+.resizeHandleCircular {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  right: 7px;
+  top: 50%;
+  transform: translate(50%, -50%);
+  cursor: e-resize;
+  background-color: #666;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.rotateHandle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background-color: #666;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: grab;
+  z-index: 100;
+}
+
+
+/* Textos dentro da mesa */
+.tableNumber {
+  font-weight: bold;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+}
+
+.tableBadge {
+  font-size: 0.7rem;
+}
+
+.tableTime {
+  font-size: 0.6rem;
+  margin-top: 2px;
+}
+
+.tableCapacity {
+  font-size: 0.6rem;
+  margin-top: 2px;
+}
+
+.tableCircular {
+  border-radius: 50% !important;
+}

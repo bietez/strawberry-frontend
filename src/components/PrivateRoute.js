@@ -1,31 +1,38 @@
 // src/components/PrivateRoute.js
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Importação nomeada
+import {jwtDecode} from 'jwt-decode'; // Importação padrão
 
-function PrivateRoute({ permissions, children }) {
+function PrivateRoute({ children, permissions = [] }) {
   const token = localStorage.getItem('token');
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
+  let user = null;
 
-  try {
-    const user = jwtDecode(token);
-    const userPermissions = user.permissions || [];
-
-    const hasPermission = permissions.every((perm) =>
-      userPermissions.includes(perm)
-    );
-
-    if (!hasPermission) {
-      return <Navigate to="/unauthorized" />;
+  if (token) {
+    try {
+      user = jwtDecode(token);
+      // Verifique se o token contém as permissões necessárias
+      if (!user.permissions) {
+        throw new Error('Permissões não encontradas no token.');
+      }
+    } catch (error) {
+      console.error("Token inválido ou faltando permissões:", error);
+      return <Navigate to="/login" replace />;
     }
-
-    return children;
-  } catch (error) {
-    console.error('Token inválido:', error);
-    return <Navigate to="/login" />;
   }
+
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Verificar se o usuário tem todas as permissões necessárias
+  const hasPermission = permissions.every(permission => user.permissions.includes(permission));
+
+  if (!hasPermission) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
 }
 
 export default PrivateRoute;

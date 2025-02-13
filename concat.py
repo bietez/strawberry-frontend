@@ -32,7 +32,7 @@ if __name__ == "__main__":
     diretorio_base = '.'  # Diretório atual
 
     # Define o nome do arquivo de saída
-    arquivo_saida = 'todo_front_end.js'
+    arquivo_saida = 'todo-frontend.js'
 
     concatenar_js(diretorio_base, arquivo_saida)
     print(f'Todos os arquivos .js foram concatenados em {arquivo_saida}')

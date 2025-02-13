@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Auth.css'; // Certifique-se de que o estilo está sendo importado
+import { Button } from 'react-bootstrap';
 
 function Register() {
   const navigate = useNavigate();
@@ -69,11 +70,11 @@ function Register() {
     editCategory: 'Editar Categoria',
     deleteCategory: 'Excluir Categoria',
     addUser: 'Adicionar Usuário',
-    manageSalesGoals: 'Gerenciar Metas de Vendas', // Nova permissão
-    viewTeamMembers: 'Visualizar Membros da Equipe', // Nova permissão
+    manageSalesGoals: 'Gerenciar Metas de Vendas',
+    viewTeamMembers: 'Visualizar Membros da Equipe',
   };
 
-  // Lista de permissões (removi duplicatas)
+  // Lista de permissões
   const permissionsList = [
     'viewDashboard',
     'viewProduct',
@@ -118,8 +119,8 @@ function Register() {
     'editCategory',
     'deleteCategory',
     'addUser',
-    'manageSalesGoals', // Nova permissão
-    'viewTeamMembers',  // Nova permissão
+    'manageSalesGoals',
+    'viewTeamMembers',
   ];
 
   return (
@@ -137,16 +138,25 @@ function Register() {
         validationSchema={Yup.object({
           nome: Yup.string().required('Obrigatório'),
           email: Yup.string().email('Email inválido').required('Obrigatório'),
-          senha: Yup.string().required('Obrigatório'),
-          // Não é necessário validar permissions aqui
+          senha: Yup.string(),
+          role: Yup.string().oneOf(['admin', 'manager', 'agent', 'feeder']).required('Obrigatório'),
+          managerId: Yup.string().when('role', {
+            is: 'agent',
+            then: Yup.string().required('Obrigatório para agentes'),
+            otherwise: Yup.string().notRequired(),
+          }),
         })}
         onSubmit={async (values, { setSubmitting }) => {
           try {
-            await api.post('/auth/register', values);
-            alert('Usuário registrado com sucesso!');
-            navigate('/login');
+            const payload = { ...values };
+            if (!payload.senha) {
+              delete payload.senha;
+            }
+            await api.put(`/users/${values.id}`, payload);
+            alert('Usuário atualizado com sucesso!');
+            navigate('/team-members');
           } catch (error) {
-            alert('Erro ao registrar usuário: ' + error.response.data.message);
+            alert('Erro ao atualizar usuário: ' + (error.response?.data?.message || error.message));
           }
           setSubmitting(false);
         }}
@@ -167,19 +177,24 @@ function Register() {
                   <ErrorMessage name="email" component="div" className="error" />
                 </div>
 
-                <div className="form-group">
-                  <label>Senha</label>
-                  <Field name="senha" type="password" className="form-control" />
-                  <ErrorMessage name="senha" component="div" className="error" />
-                </div>
-
+                {/* Campo para selecionar o Role */}
                 <div className="form-group">
                   <label>Role</label>
-                  <Field name="role" as="select" className="form-control">
+                  <Field
+                    name="role"
+                    as="select"
+                    className="form-control"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Aqui você pode adicionar lógica adicional se necessário
+                    }}
+                  >
                     <option value="agent">Agent</option>
                     <option value="manager">Manager</option>
                     <option value="admin">Admin</option>
+                    <option value="feeder">Feeder</option>
                   </Field>
+                  <ErrorMessage name="role" component="div" className="error" />
                 </div>
 
                 {/* Campo para selecionar o Gerente se o usuário for um Agente */}
@@ -219,9 +234,12 @@ function Register() {
               </div>
             </div>
 
-            <button type="submit" disabled={isSubmitting} className="btn-submit">
-              Registrar
-            </button>
+            {/* Campo oculto para ID do usuário */}
+            <Field type="hidden" name="id" />
+
+            <Button type="submit" disabled={isSubmitting} className="btn-submit">
+              Atualizar
+            </Button>
           </Form>
         )}
       </Formik>

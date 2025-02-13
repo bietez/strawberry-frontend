@@ -1,43 +1,214 @@
 /* src/components/Navbar.css */
 
-/* Estilo para tornar o Navbar responsivo e fixo no desktop */
+/* Estilo base para a Sidebar */
+.sidebar {
+  width: 250px; /* Largura expandida */
+  background-color: #343a40; /* Cor de fundo escura */
+  color: #fff; /* Texto branco */
+  height: 100vh; /* Altura total da viewport */
+  position: fixed; /* Fixada à esquerda */
+  top: 0;
+  left: 0;
+  overflow-y: auto; /* Permite rolagem vertical */
+  transition: transform 0.3s ease, width 0.3s ease;
+  z-index: 1000; /* Fica acima de outros elementos */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra para separação */
 
-.navbar {
-    position: relative;
-    width: 100%;
+  /* Ocultar a barra de rolagem */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Ocultar a barra de rolagem para navegadores baseados em WebKit (Chrome, Safari, Opera) */
+.sidebar::-webkit-scrollbar {
+  width: 0px; /* Reduz a largura para zero */
+  background: transparent; /* Fundo transparente */
+}
+
+/* Sidebar Colapsada */
+.sidebar.collapsed {
+  width: 80px; /* Largura colapsada */
+}
+
+/* Sidebar aberta no mobile */
+.sidebar.mobile-open {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  transform: translateX(0);
+}
+
+/* Overlay */
+.overlay {
+  display: none; /* Oculto por padrão */
+}
+
+/* Quando o menu mobile está aberto */
+.sidebar.mobile-open + .overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* Abaixo da sidebar */
+}
+
+/* Cabeçalho da Sidebar */
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+/* Estilo dos links de navegação */
+.navbar-nav .nav-link {
+  color: #adb5bd; /* Cor dos links */
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #fff; /* Cor dos links ao passar o mouse ou ativo */
+  background-color: #495057; /* Fundo dos links ao passar o mouse ou ativo */
+  border-radius: 4px;
+}
+
+/* Esconder o texto quando a sidebar está colapsada */
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .dropdown-toggle::after {
+  display: none;
+}
+
+/* Ajustar os ícones quando a sidebar está colapsada */
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+}
+
+/* Estilo dos dropdowns */
+.dropdown-menu {
+  background-color: #495057; /* Cor de fundo do dropdown */
+  z-index: 1050; /* Garante que o dropdown fique acima de outros elementos */
+  position: absolute; /* Define a posição do dropdown corretamente */
+}
+
+.dropdown-item {
+  color: #fff; /* Cor do texto dos dropdowns */
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+  background-color: #6c757d; /* Fundo ao passar o mouse ou ativo */
+  color: #fff;
+}
+
+/* Botão de toggle */
+.toggle-btn {
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Botão de toggle para mobile */
+.mobile-toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1100; /* Fica acima da sidebar */
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Responsividade: Ajustar a sidebar em telas menores */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
     z-index: 1000;
   }
-  
-  /* Estilo para garantir que o menu fica fixo no topo em telas grandes */
-  @media (min-width: 992px) {
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-    }
+
+  /* Quando a sidebar está aberta no mobile */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    width: 250px;
   }
-  
-  /* Ajustes para garantir que o dropdown funcione bem em dispositivos móveis */
-  .navbar-toggler {
-    border: none;
-    outline: none;
-  }
-  
-  .navbar-nav .nav-link {
-    padding: 0.5rem 1rem;
-  }
-  
-  .dropdown-menu {
-    background-color: #f8f9fa;
-  }
-  
-  .nav-item.dropdown:hover > .dropdown-menu {
+
+  /* Overlay visível quando a sidebar está aberta */
+  .sidebar.mobile-open + .overlay {
     display: block;
   }
-  
-  /* Ajuste de altura do body para evitar sobreposição pelo menu fixo em telas grandes */
-  body {
-    padding-top: 56px;
+}
+
+/* Esconder o botão de toggle em telas maiores */
+@media (min-width: 769px) {
+  .mobile-toggle-btn {
+    display: none;
   }
-  
+
+  /* Ajustes para sidebar fixa */
+  .sidebar {
+    transform: translateX(0);
+  }
+}
+
+/* Modo ESCURO */
+.dark-mode .sidebar {
+  background-color: #2b2b2b; /* Cor de fundo escura no modo escuro */
+  color: #e2e2e2; /* Texto claro no modo escuro */
+}
+
+.dark-mode .navbar-nav .nav-link {
+  color: #adb5bd; /* Cor dos links no modo escuro */
+}
+
+.dark-mode .navbar-nav .nav-link:hover,
+.dark-mode .navbar-nav .nav-link.active {
+  color: #fff; /* Cor dos links ao passar o mouse ou ativo no modo escuro */
+  background-color: #555555; /* Fundo dos links ao passar o mouse ou ativo no modo escuro */
+}
+
+.dark-mode .dropdown-menu {
+  background-color: #555555; /* Cor de fundo do dropdown no modo escuro */
+}
+
+.dark-mode .dropdown-item {
+  color: #e2e2e2; /* Cor do texto dos dropdowns no modo escuro */
+}
+
+.dark-mode .dropdown-item:hover,
+.dark-mode .dropdown-item.active {
+  background-color: #666666; /* Fundo ao passar o mouse ou ativo no modo escuro */
+  color: #fff;
+}
+
+/* Estilo para o botão de Logout */
+.nav-item .btn-link {
+  color: #adb5bd;
+  text-decoration: none;
+}
+
+.nav-item .btn-link:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Ajuste para esconder o texto quando colapsado, caso algum span esteja sendo usado */
+.sidebar.collapsed .nav-link span {
+  display: none;
+}

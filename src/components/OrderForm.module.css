@@ -1,0 +1,394 @@
+/* src/components/OrderForm.module.css */
+
+/* =========================
+   Estilos Base para OrderForm
+   ========================= */
+
+   .orderForm {
+    background-color: var(--main-bg);
+    color: var(--main-text);
+    padding: 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .darkMode {
+    background-color: var(--main-bg);
+    color: var(--main-text);
+  }
+  
+  /* Form Controls */
+  .formControl {
+    background-color: var(--form-bg);
+    color: var(--form-text);
+    border: 1px solid var(--form-border);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .formControl {
+    background-color: var(--form-bg);
+    color: var(--form-text);
+    border: 1px solid var(--form-border);
+  }
+  
+  /* Form Select */
+  .formSelect {
+    background-color: var(--form-bg);
+    color: var(--form-text);
+    border: 1px solid var(--form-border);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .formSelect {
+    background-color: var(--form-bg);
+    color: var(--form-text);
+    border: 1px solid var(--form-border);
+  }
+  
+  /* Uniform Width */
+  .uniformWidth {
+    width: 100%;
+  }
+  
+  /* Button Small */
+  .buttonSmall {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .darkMode .buttonSmall {
+    /* Herda as cores dos botões principais */
+    background-color: var(--btn-primary-bg) !important;
+    color: var(--btn-primary-text) !important;
+    border: 1px solid var(--btn-primary-bg) !important;
+  }
+  
+  /* Button Primary */
+  .buttonPrimary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-bg);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .buttonPrimary:hover,
+  .buttonPrimary:focus {
+    background-color: var(--btn-primary-hover-bg, #0056b3);
+    color: var(--btn-primary-text);
+    border-color: var(--btn-primary-hover-bg, #0056b3);
+  }
+  
+  .darkMode .buttonPrimary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-bg);
+  }
+  
+  .darkMode .buttonPrimary:hover,
+  .darkMode .buttonPrimary:focus {
+    background-color: var(--btn-primary-hover-bg, #0056b3);
+    color: var(--btn-primary-text);
+    border-color: var(--btn-primary-hover-bg, #0056b3);
+  }
+  
+  /* Button Secondary */
+  .buttonSecondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-bg);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .buttonSecondary:hover,
+  .buttonSecondary:focus {
+    background-color: var(--btn-secondary-hover-bg, #5a6268);
+    color: var(--btn-secondary-text);
+    border-color: var(--btn-secondary-hover-bg, #5a6268);
+  }
+  
+  .darkMode .buttonSecondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-bg);
+  }
+  
+  .darkMode .buttonSecondary:hover,
+  .darkMode .buttonSecondary:focus {
+    background-color: var(--btn-secondary-hover-bg, #5a6268);
+    color: var(--btn-secondary-text);
+    border-color: var(--btn-secondary-hover-bg, #5a6268);
+  }
+  
+  /* Total Text */
+  .totalText {
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--main-text);
+  }
+  
+  .darkMode .totalText {
+    color: var(--main-text);
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    border-top: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .footer {
+    background-color: #555;
+    color: var(--footer-text);
+    border-top: 1px solid var(--border-color);
+  }
+  
+  /* Footer Form */
+  .footerForm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Card */
+  .card {
+    background-color: var(--main-bg);
+    color: var(--main-text);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .card {
+    background-color: var(--card-bg, #444444) !important;
+    color: var(--card-text, #ffffff) !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  /* Spinner */
+  .spinner {
+    color: var(--btn-primary-bg);
+  }
+  
+  .darkMode .spinner {
+    color: #ffffff;
+  }
+  
+  /* Modal */
+  .modalContent {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .modalContent {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+  }
+  
+  /* Alert */
+  .alertCustom {
+    background-color: var(--alert-bg);
+    color: var(--alert-text);
+    border: 1px solid var(--alert-border);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .alertCustom {
+    background-color: var(--alert-bg);
+    color: var(--alert-text);
+    border: 1px solid var(--alert-border);
+  }
+  
+  /* Tooltip */
+  .tooltipCustom {
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    border: 1px solid var(--tooltip-border, #dee2e6);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .tooltipCustom {
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    border: 1px solid var(--tooltip-border, #dee2e6);
+  }
+  
+  /* Popover */
+  .popoverCustom {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .popoverCustom {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+  }
+  
+  /* Badge */
+  .badgeCustom {
+    background-color: var(--badge-bg);
+    color: var(--badge-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .darkMode .badgeCustom {
+    background-color: var(--badge-bg);
+    color: var(--badge-text);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .footer {
+      position: static;
+      box-shadow: none;
+    }
+  
+    .darkMode .footer {
+      position: static;
+      box-shadow: none;
+    }
+  }
+  
+  /* =========================
+     Estilos Adicionais para Componentes Específicos
+     ========================= */
+  
+  /* Button Variants */
+  .btnPrimaryCustom {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-bg);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .btnPrimaryCustom {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-bg);
+  }
+  
+  .btnSecondaryCustom {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-bg);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .darkMode .btnSecondaryCustom {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-bg);
+  }
+  
+  /* Card Header */
+  .cardHeader {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border-bottom: 1px solid var(--modal-border);
+  }
+  
+  .darkMode .cardHeader {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border-bottom: 1px solid var(--modal-border);
+  }
+  
+  /* Card Body */
+  .cardBody {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+  }
+  
+  /* Card Footer */
+  .cardFooter {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border-top: 1px solid var(--modal-border);
+  }
+  
+  /* Image */
+  .imageCustom {
+    height: 80px;
+    object-fit: cover;
+  }
+  
+  /* =========================
+     Estilos para Tooltip e Popover (específicos)
+     ========================= */
+  
+  .tooltip {
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    border: 1px solid var(--tooltip-border, #dee2e6);
+  }
+  
+  .darkMode .tooltip {
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    border: 1px solid var(--tooltip-border, #dee2e6);
+  }
+  
+  .popover {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+  }
+  
+  .darkMode .popover {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
+  }
+  
+  /* =========================
+     Estilos para Responsive Design
+     ========================= */
+  
+  @media (max-width: 768px) {
+    .orderForm {
+      padding: 10px;
+    }
+  
+    .formGroup {
+      margin-bottom: 1rem;
+    }
+  
+    .buttonGroup {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .buttonGroup .button {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+  

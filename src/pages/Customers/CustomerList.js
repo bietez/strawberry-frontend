@@ -1,4 +1,5 @@
 // src/pages/Customers/CustomerList.js
+
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,32 +10,68 @@ import {
   Container,
   Alert,
   Modal,
+  Form,
+  InputGroup,
 } from 'react-bootstrap';
-import { toast } from 'react-toastify'; // Importando toast
+import { toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importar FontAwesomeIcon
+import { faTrash, faPenToSquare, faSearch, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para controle de carregamento
-  const [error, setError] = useState(null); // Estado para controle de erros
-  const [showModal, setShowModal] = useState(false); // Estado para controle do Modal
-  const [customerToDelete, setCustomerToDelete] = useState(null); // Cliente selecionado para exclusão
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Estados para paginação, pesquisa e ordenação
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10); // Limit fixo de 10 por página
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState('nome');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' ou 'desc'
+
+  const [showModal, setShowModal] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState(null);
+  const [customerDetails, setCustomerDetails] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await api.get('/customers');
-        setCustomers(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Erro ao obter clientes:', error);
-        setError('Erro ao obter clientes.');
-        setLoading(false);
-      }
-    };
-
     fetchCustomers();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchTerm, sortField, sortOrder]);
+
+  const fetchCustomers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get('/customers/advanced', {
+        params: {
+          page,
+          limit,
+          search: searchTerm,
+          sort: sortField,
+          order: sortOrder,
+        },
+      });
+
+      if (response.data && Array.isArray(response.data.customers)) {
+        setCustomers(response.data.customers);
+        setTotalPages(response.data.totalPages || 1);
+      } else {
+        setCustomers([]);
+        setTotalPages(1);
+      }
+    } catch (error) {
+      console.error('Erro ao obter clientes:', error);
+      setError('Erro ao obter clientes.');
+      setCustomers([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDeleteClick = (customer) => {
     setCustomerToDelete(customer);
@@ -49,36 +86,62 @@ function CustomerList() {
       setCustomers(customers.filter((c) => c._id !== customerToDelete._id));
       setShowModal(false);
       setCustomerToDelete(null);
-      toast.success('Cliente excluído com sucesso!'); // Toast de sucesso
+      toast.success('Cliente excluído com sucesso!');
     } catch (error) {
       console.error('Erro ao excluir cliente:', error);
-      toast.error('Erro ao excluir cliente'); // Toast de erro
+      toast.error('Erro ao excluir cliente');
     }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setCustomerToDelete(null);
+    setCustomerDetails(null);
   };
 
-  if (loading) {
-    return (
-      <Container className="text-center my-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Carregando...</span>
-        </Spinner>
-        <div>Carregando clientes...</div>
-      </Container>
-    );
-  }
+  // Função para lidar com a pesquisa
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1); // Resetar para página 1 ao pesquisar
+    fetchCustomers();
+  };
 
-  if (error) {
-    return (
-      <Container className="my-5">
-        <Alert variant="danger">{error}</Alert>
-      </Container>
-    );
-  }
+  // Função para mudar a ordenação
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // Alterna a ordem
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Define novo campo de ordenação
+      setSortField(field);
+      setSortOrder('asc');
+    }
+    setPage(1); // Ao alterar a ordenação, volta para a primeira página
+  };
+
+  // Paginação
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+  // Função auxiliar para formatar o número do WhatsApp
+  const formatWhatsappNumber = (number) => {
+    return number ? number.replace(/\D/g, '') : '';
+  };
+
+  // Função para abrir detalhes do cliente
+  const handleViewDetails = (customer) => {
+    setCustomerDetails(customer);
+    setShowModal(true);
+  };
 
   return (
     <Container className="my-5">
@@ -88,92 +151,162 @@ function CustomerList() {
           Novo Cliente
         </Link>
       </div>
-      <div className="table-responsive">
-        <Table striped bordered hover>
-          <thead className="table-dark">
-            <tr>
-              <th>CPF/CNPJ</th>
-              <th>Nome</th>
-              <th>Contato</th>
-              <th>Email</th>
-              <th>Telefone</th>
-              <th>Whatsapp</th>
-              <th>CEP</th>
-              <th>Rua</th>
-              <th>Número</th>
-              <th>Complemento</th>
-              <th>Bairro</th>
-              <th>Cidade</th>
-              <th>Estado</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.length > 0 ? (
-              customers.map((customer) => (
-                <tr key={customer._id}>
-                  <td>{customer.cpfCnpj}</td>
-                  <td>{customer.nome}</td>
-                  <td>{customer.contato || '-'}</td>
-                  <td>{customer.email || '-'}</td>
-                  <td>{customer.telefone || '-'}</td>
-                  <td>{customer.whatsapp || '-'}</td>
-                  <td>{customer.cep || '-'}</td>
-                  <td>{customer.rua || '-'}</td>
-                  <td>{customer.numero || '-'}</td>
-                  <td>{customer.complemento || '-'}</td>
-                  <td>{customer.bairro || '-'}</td>
-                  <td>{customer.cidade || '-'}</td>
-                  <td>{customer.estado || '-'}</td>
-                  <td>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => navigate(`/customers/${customer._id}`)}
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteClick(customer)}
-                    >
-                      Excluir
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="14" className="text-center">
-                  Nenhum cliente encontrado.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
 
-      {/* Modal de Confirmação de Exclusão */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      {/* Barra de Pesquisa */}
+      <Form onSubmit={handleSearch} className="mb-3">
+        <InputGroup>
+          <Form.Control
+            type="text"
+            placeholder="Buscar por nome, email, CPF/CNPJ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Button variant="primary" type="submit">
+            <FontAwesomeIcon icon={faSearch} />
+          </Button>
+        </InputGroup>
+      </Form>
+
+      {loading ? (
+        <div className="text-center my-5">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Carregando...</span>
+          </Spinner>
+          <div>Carregando clientes...</div>
+        </div>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : (
+        <>
+          <div className="table-responsive">
+            <Table striped bordered hover>
+              <thead className="table-dark">
+                <tr>
+                  <th>Nome</th>
+                  <th>Whatsapp</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customers.length > 0 ? (
+                  customers.map((customer) => (
+                    <tr key={customer._id}>
+                      <td>{customer.nome}</td>
+                      <td>
+                        {customer.whatsapp ? (
+                          <a
+                            href={`https://wa.me/55${formatWhatsappNumber(customer.whatsapp)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Enviar mensagem para ${customer.nome} no WhatsApp`}
+                          >
+                            <FontAwesomeIcon icon={faWhatsapp} /> {customer.whatsapp}
+                          </a>
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td>
+                        <Button
+                          variant="info"
+                          size="sm"
+                          className="me-2"
+                          onClick={() => handleViewDetails(customer)}
+                          aria-label={`Ver detalhes de ${customer.nome}`}
+                        >
+                          <FontAwesomeIcon icon={faMagnifyingGlass} />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeleteClick(customer)}
+                          aria-label={`Excluir ${customer.nome}`}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center">
+                      Nenhum cliente encontrado.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
+
+          {/* Paginação */}
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <Button
+              variant="secondary"
+              onClick={handlePrevPage}
+              disabled={page === 1}
+            >
+              Anterior
+            </Button>
+            <span>
+              Página {page} de {totalPages}
+            </span>
+            <Button
+              variant="secondary"
+              onClick={handleNextPage}
+              disabled={page === totalPages}
+            >
+              Próxima
+            </Button>
+          </div>
+        </>
+      )}
+
+      {/* Modal de Detalhes e Confirmação de Exclusão */}
+      <Modal show={showModal} onHide={handleCloseModal} centered size={customerDetails ? "lg" : "sm"}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar Exclusão</Modal.Title>
+          <Modal.Title>
+            {customerDetails ? `Detalhes de ${customerDetails.nome}` : 'Confirmar Exclusão'}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {customerToDelete && (
-            <p>
-              Tem certeza que deseja excluir o cliente <strong>{customerToDelete.nome}</strong>?
-            </p>
+          {customerDetails ? (
+            <>
+              <p><strong>CPF/CNPJ:</strong> {customerDetails.cpfCnpj || '-'}</p>
+              <p><strong>Email:</strong> {customerDetails.email || '-'}</p>
+              <p><strong>Fixo:</strong> {customerDetails.telefone || '-'}</p>
+              <p><strong>Whatsapp:</strong> {customerDetails.whatsapp || '-'}</p>
+              <p><strong>CEP:</strong> {customerDetails.cep || '-'}</p>
+              <p><strong>Rua:</strong> {customerDetails.rua || '-'}</p>
+              <p><strong>Número:</strong> {customerDetails.numero || '-'}</p>
+              <p><strong>Complemento:</strong> {customerDetails.complemento || '-'}</p>
+              <p><strong>Bairro:</strong> {customerDetails.bairro || '-'}</p>
+              <p><strong>Cidade:</strong> {customerDetails.cidade || '-'}</p>
+              <p><strong>Estado:</strong> {customerDetails.estado || '-'}</p>
+              <p><strong>Data de Cadastro:</strong> {new Date(customerDetails.createdAt).toLocaleString()}</p>
+            </>
+          ) : (
+            customerToDelete && (
+              <p>
+                Tem certeza que deseja excluir o cliente <strong>{customerToDelete.nome}</strong>?
+              </p>
+            )
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleConfirmDelete}>
-            Excluir
-          </Button>
+          {customerDetails ? (
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Fechar
+            </Button>
+          ) : (
+            <>
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={handleConfirmDelete}>
+                Excluir
+              </Button>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </Container>

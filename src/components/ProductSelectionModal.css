@@ -1,0 +1,32 @@
+/* src/components/ProductSelectionModal.css */
+
+/* Estilização dos cards de produto */
+.product-card {
+    border: 1px solid #343a40;
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .product-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .product-image {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .price {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  /* Responsividade adicional, se necessário */
+  @media (max-width: 576px) {
+    .product-image {
+      height: 150px;
+    }
+  }
+  

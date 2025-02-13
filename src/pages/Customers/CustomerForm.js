@@ -6,6 +6,7 @@ import axios from 'axios'; // Para chamadas ao ViaCEP
 import { Form, Button, Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import InputMask from 'react-input-mask';
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet-async'; // Importar Helmet
 
 function CustomerForm() {
   const [customer, setCustomer] = useState({
@@ -25,6 +26,7 @@ function CustomerForm() {
   });
   const [loading, setLoading] = useState(false); // Estado para controle de carregamento
   const [loadingCep, setLoadingCep] = useState(false); // Estado para controle de carregamento do CEP
+  const [error, setError] = useState(null); // Estado para controle de erros
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -33,7 +35,6 @@ function CustomerForm() {
       setLoading(true);
       api.get(`/customers/${id}`)
         .then((response) => {
-          // Garantir que todos os campos estejam presentes
           const data = response.data;
           setCustomer({
             cpfCnpj: data.cpfCnpj || '',
@@ -54,13 +55,17 @@ function CustomerForm() {
         .catch((error) => {
           console.error('Erro ao obter cliente:', error);
           toast.error('Erro ao obter cliente.');
+          setError('Erro ao obter cliente.');
         })
         .finally(() => setLoading(false));
     }
   }, [id]);
 
   const handleChange = (e) => {
-    setCustomer({ ...customer, [e.target.name]: e.target.value });
+    setCustomer(prevState => ({
+      ...prevState,
+      [e.target.name]: e.target.value
+    }));
   };
 
   const handleCepBlur = async () => {
@@ -78,14 +83,14 @@ function CustomerForm() {
         return;
       }
 
-      setCustomer({
-        ...customer,
+      setCustomer(prevState => ({
+        ...prevState,
         rua: response.data.logradouro || '',
         complemento: response.data.complemento || '',
         bairro: response.data.bairro || '',
         cidade: response.data.localidade || '',
         estado: response.data.uf || '',
-      });
+      }));
       toast.success('Endereço carregado com sucesso!');
     } catch (error) {
       console.error('Erro ao buscar CEP:', error);
@@ -127,9 +132,20 @@ function CustomerForm() {
     );
   }
 
+  if (error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">{error}</Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container className="my-5">
       <h2>{id ? 'Editar Cliente' : 'Novo Cliente'}</h2>
+      <Helmet>
+        <title>Cadastro de Clientes - Strawberry</title> {/* Definir o título da página */}
+      </Helmet>      
       <Form onSubmit={handleSubmit}>
         <Row>
           {/* CPF/CNPJ */}
@@ -137,7 +153,7 @@ function CustomerForm() {
             <Form.Group controlId="cpfCnpj" className="mb-3">
               <Form.Label>CPF/CNPJ*</Form.Label>
               <InputMask
-                mask={ (customer.cpfCnpj.replace(/\D/g, '').length > 11) ? '99.999.999/9999-99' : '999.999.999-99' }
+                mask={customer.cpfCnpj.replace(/\D/g, '').length > 11 ? '99.999.999/9999-99' : '999.999.999-99'}
                 value={customer.cpfCnpj}
                 onChange={handleChange}
                 onBlur={() => {}} // Evitar chamada excessiva
@@ -147,7 +163,7 @@ function CustomerForm() {
                     type="text"
                     name="cpfCnpj"
                     placeholder={
-                      (customer.cpfCnpj.replace(/\D/g, '').length > 11)
+                      customer.cpfCnpj.replace(/\D/g, '').length > 11
                         ? '00.000.000/0000-00'
                         : '000.000.000-00'
                     }

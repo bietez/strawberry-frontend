@@ -1,0 +1,86 @@
+/* src/pages/Orders/OrderList.css */
+
+/* Estilização geral para os cards de pedido */
+.card {
+  border: 2px solid #343a40; /* Bordas escuras */
+  border-radius: 10px;
+  background-color: #f8f9fa; /* Fundo claro para contraste */
+  /* Remova ou comente o efeito de hover para evitar o zoom
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  */
+}
+
+/* Restante do CSS permanece o mesmo */
+.card-header {
+  background-color: #343a40 !important; /* Cabeçalho escuro */
+  color: #f8f9fa !important; /* Texto claro */
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-bottom: 2px solid #343a40;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.card-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.card-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.btn-info,
+.btn-danger {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+  }
+
+  .card-text {
+    font-size: 1rem;
+  }
+
+  .btn-info,
+  .btn-danger {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* Estilização dos Badges */
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5em 0.75em;
+}
+
+/* Espaçamento entre os cards */
+.g-4 {
+  gap: 1.5rem;
+}
+
+/* Ajustes para o Container */
+.container.my-5 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}

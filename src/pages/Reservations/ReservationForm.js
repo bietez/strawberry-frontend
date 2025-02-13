@@ -1,210 +1,259 @@
-// components/ReservationForm.js
+// src/pages/Reservations/ReservationForm.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import api from '../../services/api';
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
+import { Button, Container, Row, Col, Alert, Spinner, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Remova ToastContainer daqui
+import * as Yup from 'yup';
 
 function ReservationForm() {
   const [clientes, setClientes] = useState([]);
   const [mesas, setMesas] = useState([]);
-  const [clienteId, setClienteId] = useState('');
-  const [mesaId, setMesaId] = useState('');
-  const [dataReserva, setDataReserva] = useState('');
-  const [numeroPessoas, setNumeroPessoas] = useState(1);
-  const [mensagemSucesso, setMensagemSucesso] = useState('');
-  const [mensagemErro, setMensagemErro] = useState('');
-  const { id } = useParams(); // Obtém o ID da reserva da URL
-  const [status, setStatus] = useState('Ativa'); // Inicializa como 'Ativa'
-
+  const [loadingData, setLoadingData] = useState(true);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  const [initialValues, setInitialValues] = useState({
+    clienteId: '',
+    mesaId: '',
+    dataReserva: '',
+    numeroPessoas: 1,
+    status: 'ativa',
+  });
+
   useEffect(() => {
-    fetchClientes();
-    fetchMesas();
-    if (id) {
-      // Se um ID está presente, estamos editando uma reserva existente
-      fetchReservationDetails();
-    }
+    const fetchData = async () => {
+      try {
+        // Obter a lista de clientes
+        const clientesRes = await api.get('/customers');
+        setClientes(clientesRes.data);
+
+        if (id) {
+          // Edição: obter detalhes da reserva existente
+          const reservaRes = await api.get(`/reservations/${id}`);
+          const reserva = reservaRes.data;
+          setInitialValues({
+            clienteId: reserva.cliente?._id || '',
+            mesaId: reserva.mesa?._id || '',
+            dataReserva: reserva.dataReserva
+              ? new Date(reserva.dataReserva).toISOString().slice(0, 16)
+              : '',
+            numeroPessoas: reserva.numeroPessoas || 1,
+            status: reserva.status || 'ativa',
+          });
+          // Buscar mesas disponíveis para a data da reserva existente
+          await fetchAvailableTables(reserva.dataReserva);
+        } else {
+          // Criação: definir dataReserva para 1 hora no futuro
+          const currentDate = new Date();
+          currentDate.setHours(currentDate.getHours() + 1);
+          const currentDateISO = currentDate.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
+          setInitialValues((prev) => ({
+            ...prev,
+            dataReserva: currentDateISO,
+          }));
+          await fetchAvailableTables(currentDateISO);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        const errorMessage = 'Erro ao carregar dados. Por favor, tente novamente mais tarde.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
-  const fetchClientes = async () => {
+  const fetchAvailableTables = async (dataReserva) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/api/customers', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setClientes(response.data);
-    } catch (error) {
-      console.error('Erro ao obter clientes:', error);
-    }
-  };
+      const reservaDate = new Date(dataReserva);
+      if (isNaN(reservaDate)) {
+        throw new Error('Data da reserva inválida');
+      }
+      const isoDate = reservaDate.toISOString();
 
-  const fetchMesas = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/api/tables', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await api.get('/reservations/available-tables', {
+        params: { dataReserva: isoDate },
       });
       setMesas(response.data);
+      setError(null); // Limpa erros anteriores
     } catch (error) {
-      console.error('Erro ao obter mesas:', error);
+      console.error('Erro ao obter mesas disponíveis:', error);
+      const errorMessage = error.response?.data?.message || 'Erro ao obter mesas disponíveis.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
-  const fetchReservationDetails = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/api/reservations/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const reservation = response.data;
-      setClienteId(reservation.cliente?._id || '');
-      setMesaId(reservation.mesa?._id || '');
-      setDataReserva(reservation.dataReserva.slice(0, 16)); // Formato 'YYYY-MM-DDTHH:mm'
-      setNumeroPessoas(reservation.numeroPessoas);
-      setStatus(reservation.status === true ? 'Ativa' : 'Cancelada'); // Ajuste aqui
-    } catch (error) {
-      console.error('Erro ao obter detalhes da reserva:', error);
-      setMensagemErro('Erro ao carregar reserva. Por favor, tente novamente.');
-    }
-  };
+  const validationSchema = Yup.object().shape({
+    clienteId: Yup.string().required('Cliente é obrigatório'),
+    mesaId: Yup.string().required('Mesa é obrigatória'),
+    dataReserva: Yup.date()
+      .min(new Date(new Date().getTime() + 60 * 60 * 1000), 'A data da reserva deve ser pelo menos 1 hora no futuro')
+      .required('Data da reserva é obrigatória'),
+    numeroPessoas: Yup.number()
+      .min(1, 'Pelo menos uma pessoa')
+      .required('Número de pessoas é obrigatório'),
+    status: Yup.string()
+      .oneOf(['ativa', 'concluida', 'cancelada'], 'Status inválido')
+      .required('Status é obrigatório'),
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMensagemSucesso('');
-    setMensagemErro('');
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const token = localStorage.getItem('token');
-      const reservaData = {
-        clienteId,
-        mesaId,
-        dataReserva,
-        numeroPessoas,
-        status: status === 'Ativa', // Converte para booleano
-      };
-      if (id) {
-        // Atualiza a reserva existente
-        await axios.put(`http://localhost:8000/api/reservations/${id}`, reservaData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setMensagemSucesso('Reserva atualizada com sucesso!');
-      } else {
-        // Cria uma nova reserva
-        await axios.post('http://localhost:8000/api/reservations', reservaData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setMensagemSucesso('Reserva criada com sucesso!');
-        // Limpar o formulário
-        setClienteId('');
-        setMesaId('');
-        setDataReserva('');
-        setNumeroPessoas(1);
-        setStatus('Ativa'); // Reseta para 'Ativa'
+      const reservaDate = new Date(values.dataReserva);
+      if (isNaN(reservaDate)) {
+        throw new Error('Data da reserva inválida');
       }
-      // Opcionalmente, redireciona de volta para a lista de reservas
+      const reservaData = {
+        clienteId: values.clienteId,
+        mesaId: values.mesaId,
+        dataReserva: reservaDate.toISOString(),
+        numeroPessoas: values.numeroPessoas,
+        status: values.status,
+      };
+
+      if (id) {
+        // Edição
+        await api.put(`/reservations/${id}`, reservaData);
+        toast.success('Reserva atualizada com sucesso!');
+      } else {
+        // Criação
+        await api.post('/reservations', reservaData);
+        toast.success('Reserva criada com sucesso!');
+      }
       navigate('/reservations');
     } catch (error) {
       console.error('Erro ao salvar reserva:', error);
-      setMensagemErro('Erro ao salvar reserva. Por favor, tente novamente.');
+      const message = error.response?.data?.message || 'Erro ao salvar reserva.';
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (loadingData) {
+    return (
+      <Container className="mt-4 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Carregando...</span>
+        </Spinner>
+        <div className="mt-2">Carregando dados...</div>
+      </Container>
+    );
+  }
+
+  if (error && !mesas.length) { // Exibe o erro apenas se não houver mesas disponíveis
+    return (
+      <Container className="mt-4">
+        <Alert variant="danger">{error}</Alert>
+      </Container>
+    );
+  }
+
   return (
-    <Container className="mt-4">
-      <h1 className="mb-4">{id ? 'Editar Reserva' : 'Criar Nova Reserva'}</h1>
-      {mensagemSucesso && <Alert variant="success">{mensagemSucesso}</Alert>}
-      {mensagemErro && <Alert variant="danger">{mensagemErro}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="clienteId" className="mb-3">
-          <Form.Label>Cliente</Form.Label>
-          <Form.Control
-            as="select"
-            value={clienteId}
-            onChange={(e) => setClienteId(e.target.value)}
-            required
-          >
-            <option value="">Selecione um cliente</option>
-            {clientes.map((cliente) => (
-              <option key={cliente._id} value={cliente._id}>
-                {cliente.nome}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-
-        <Form.Group controlId="mesaId" className="mb-3">
-          <Form.Label>Mesa</Form.Label>
-          <Form.Control
-            as="select"
-            value={mesaId}
-            onChange={(e) => setMesaId(e.target.value)}
-            required
-          >
-            <option value="">Selecione uma mesa</option>
-            {mesas.map((mesa) => (
-              <option key={mesa._id} value={mesa._id}>
-                Mesa {mesa.numeroMesa} - Ambiente {mesa.ambiente?.nome}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-
-        <Row>
-          <Col md={4}>
-            <Form.Group controlId="dataReserva" className="mb-3">
-              <Form.Label>Data da Reserva</Form.Label>
-              <Form.Control
-                type="datetime-local"
-                value={dataReserva}
-                onChange={(e) => setDataReserva(e.target.value)}
-                required
-              />
+    <Container className="my-5">
+      {/* Remova <ToastContainer /> daqui */}
+      <Row className="mb-4">
+        <Col>
+          <h2>{id ? 'Editar Reserva' : 'Nova Reserva'}</h2>
+        </Col>
+        <Col className="text-end">
+          <Button variant="secondary" onClick={() => navigate('/reservations')}>
+            Voltar para Reservas
+          </Button>
+        </Col>
+      </Row>
+      <Formik
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting, values, setFieldValue }) => (
+          <FormikForm>
+            <Form.Group className="mb-3" controlId="clienteId">
+              <Form.Label>Cliente</Form.Label>
+              <Field as="select" name="clienteId" className="form-select">
+                <option value="">Selecione um cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente._id} value={cliente._id}>
+                    {cliente.nome}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage name="clienteId" component="div" className="text-danger" />
             </Form.Group>
-          </Col>
 
-          <Col md={4}>
-            <Form.Group controlId="numeroPessoas" className="mb-3">
-              <Form.Label>Número de Pessoas</Form.Label>
-              <Form.Control
-                type="number"
-                min="1"
-                value={numeroPessoas}
-                onChange={(e) => setNumeroPessoas(e.target.value)}
-                required
-              />
+            <Form.Group className="mb-3" controlId="mesaId">
+              <Form.Label>Mesa</Form.Label>
+              <Field as="select" name="mesaId" className="form-select">
+                <option value="">Selecione uma mesa</option>
+                {mesas.map((mesa) => (
+                  <option key={mesa._id} value={mesa._id}>
+                    Mesa {mesa.numeroMesa} - Ambiente {mesa.ambiente?.nome || 'N/A'}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage name="mesaId" component="div" className="text-danger" />
             </Form.Group>
-          </Col>
 
-          <Col md={4}>
-            <Form.Group controlId="status" className="mb-3">
-              <Form.Label>Status</Form.Label>
-              <Form.Control
-                as="select"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                required
-              >
-                <option value="Ativa">Ativa</option>
-                <option value="Cancelada">Cancelada</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="dataReserva">
+                  <Form.Label>Data da Reserva</Form.Label>
+                  <Field
+                    type="datetime-local"
+                    name="dataReserva"
+                    className="form-control"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFieldValue('dataReserva', value);
+                      if (value) {
+                        fetchAvailableTables(value);
+                        setFieldValue('mesaId', ''); // Resetar a seleção da mesa ao mudar a data
+                      }
+                    }}
+                  />
+                  <ErrorMessage name="dataReserva" component="div" className="text-danger" />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3" controlId="numeroPessoas">
+                  <Form.Label>Número de Pessoas</Form.Label>
+                  <Field
+                    type="number"
+                    name="numeroPessoas"
+                    className="form-control"
+                    min="1"
+                  />
+                  <ErrorMessage name="numeroPessoas" component="div" className="text-danger" />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3" controlId="status">
+                  <Form.Label>Status</Form.Label>
+                  <Field as="select" name="status" className="form-select">
+                    <option value="ativa">Ativa</option>
+                    <option value="concluida">Concluída</option>
+                    <option value="cancelada">Cancelada</option>
+                  </Field>
+                  <ErrorMessage name="status" component="div" className="text-danger" />
+                </Form.Group>
+              </Col>
+            </Row>
 
-        <Button variant="primary" type="submit">
-          {id ? 'Atualizar Reserva' : 'Criar Reserva'}
-        </Button>
-      </Form>
+            <Button variant="primary" type="submit" disabled={isSubmitting || !mesas.length}>
+              {isSubmitting ? 'Salvando...' : id ? 'Atualizar Reserva' : 'Criar Reserva'}
+            </Button>
+          </FormikForm>
+        )}
+      </Formik>
     </Container>
   );
 }

@@ -1,0 +1,604 @@
+/* src/components/Layout.css */
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Estilo para o conteúdo principal */
+.main-content {
+  flex: 1;
+  padding: 0px;
+  margin-left: 250px; /* Deve corresponder à largura expandida da sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+.app-container.collapsed .main-content {
+  margin-left: 80px; /* Deve corresponder à largura colapsada da sidebar */
+}
+.print-content {
+  padding: 20px; /* Ajuste conforme necessário */
+  background-color: white; /* Garantir fundo branco no PDF */
+  /* Adicione outras propriedades de estilo conforme necessário */
+}
+
+/* src/components/Layout.css */
+
+
+/* Oculta a tabela de exportação na interface do usuário */
+.export-table {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Opcional: Oculta a coluna "Ações" durante a exportação */
+.exporting .acoes-column {
+  display: none;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .sidebar.collapsed .main-content {
+    margin-left: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* Exemplo de Layout.css para modo escuro completo */
+
+/* Container base */
+.app-container {
+display: flex;
+min-height: 100vh;
+flex-direction: column;
+}
+
+/* Se tiver sidebar colapsável */
+.app-container.collapsed .navbar {
+width: 60px;
+}
+
+/* Modo CLARO (padrão) */
+.app-container {
+background-color: #f8f9fa;
+color: #212529;
+}
+
+/* Modo ESCURO */
+.dark-mode {
+background-color: #2b2b2b;
+color: #e2e2e2;
+}
+
+/* Conteúdo principal */
+.main-content {
+flex: 1;
+}
+
+/* Modo escuro para o main-content */
+.dark-mode .main-content {
+background-color: #333;
+color: #fff;
+}
+
+/* Cartões do React-Bootstrap */
+.dark-mode .card {
+background-color: #444 !important;
+color: #fff !important;
+border-color: #666 !important;
+}
+
+/* Tabelas */
+.dark-mode table {
+background-color: #444 !important;
+color: #fff !important;
+border-color: #666 !important;
+}
+.dark-mode thead.table-dark {
+background-color: #555 !important;
+color: #fff !important;
+}
+.dark-mode tbody tr {
+border-color: #666 !important;
+}
+
+/* ADIÇÃO: estilizando o container .table-responsive */
+.table-responsive {
+background-color: #444 !important; /* fundo do container */
+color: #fff !important;           /* texto dentro do container */
+border-color: #666 !important;
+}
+
+/* Botões */
+.dark-mode .btn {
+background-color: #555 !important;
+color: #fff !important;
+border: 1px solid #777 !important;
+}
+.dark-mode .btn:hover {
+background-color: #666 !important;
+}
+
+/* Modo ESCURO */
+.dark-mode {
+background-color: #2b2b2b;
+color: #e2e2e2;
+}
+
+/* Estilização para tabelas específicas */
+.dark-mode table {
+background-color: #444 !important;
+color: #fff !important;
+border-color: #666 !important;
+}
+
+/* Tabelas striped */
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+background-color: #555 !important;
+}
+.dark-mode .table-striped tbody tr:nth-of-type(even) {
+background-color: #444 !important;
+}
+
+/* Tabelas bordered */
+.dark-mode .table-bordered {
+border: 1px solid #666 !important;
+}
+.dark-mode .table-bordered td,
+.dark-mode .table-bordered th {
+border: 1px solid #666 !important;
+background-color: #2b2b2b;
+}
+
+/* Tabelas hover */
+.dark-mode .table-hover tbody tr:hover {
+background-color: #666 !important;
+color: #fff !important;
+}
+
+/* Tabelas com combinação específica de classes */
+.dark-mode table.table.table-striped.table-bordered.table-hover {
+background-color: #444 !important; /* Fundo */
+color: #fff !important; /* Texto */
+border-color: #666 !important; /* Bordas */
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:nth-of-type(odd) {
+background-color: #555 !important;
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:nth-of-type(even) {
+background-color: #444 !important;
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:hover {
+background-color: #666 !important;
+}
+
+/* Tabelas head (thead-dark) */
+.dark-mode thead.table-dark {
+background-color: #555 !important;
+color: #171717 !important;
+}
+
+/* Ajuste global para textos em tabelas */
+.dark-mode td,
+.dark-mode th {
+color: #e2e2e2 !important;
+}
+
+/* src/styles/layout.css */
+
+/* =========================
+ Modals Globais - Modo Escuro
+ ========================= */
+
+ .modal-content {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+.modal-header .modal-title {
+  color: #ffffff !important;
+}
+
+.modal-body a {
+  color: #66b2ff !important;
+}
+
+.modal-content .form-control,
+.modal-content .form-select {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+  border-color: #666666 !important;
+}
+
+.modal-content .form-control:focus,
+.modal-content .form-select:focus {
+  background-color: #555555 !important;
+  color: #ffffff !important;
+  border-color: #777777 !important;
+}
+
+.modal-content .btn-primary {
+  background-color: #375a7f !important;
+  border-color: #375a7f !important;
+  color: #ffffff !important;
+}
+
+.modal-content .btn-secondary {
+  background-color: #444444 !important;
+  border-color: #444444 !important;
+  color: #ffffff !important;
+}
+
+.modal-content .btn-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+.modal-content .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.modal-content .btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #ffffff !important;
+}
+
+.modal-content .spinner-border,
+.modal-content .spinner-grow {
+  color: #ffffff !important;
+}
+
+.modal-content .alert {
+  background-color: #721c24 !important;
+  color: #f8d7da !important;
+  border-color: #f5c6cb !important;
+}
+.modal-content table th {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Linhas das tabelas no modal */
+.modal-content table tr {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Cabeçalhos específicos para dark mode */
+.dark-mode .modal-content table th {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Linhas específicas para dark mode */
+.dark-mode .modal-content table tr {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}  
+
+.dark-mode .print-content {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+}
+/* src/components/Layout.css */
+
+/* =========================
+   Modo Escuro para Elementos de Formulário
+   ========================= */
+
+/* Aplicar estilos de modo escuro aos elementos de formulário */
+.dark-mode input[type="text"],
+.dark-mode input[type="number"],
+.dark-mode input[type="email"],
+.dark-mode input[type="password"],
+.dark-mode textarea,
+.dark-mode select,
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode .form-check-input {
+  background-color: #444444 !important; /* Fundo escuro */
+  color: #e2e2e2 !important;             /* Texto claro */
+  border: 1px solid #666666 !important; /* Borda mais clara */
+}
+
+/* Placeholder text */
+.dark-mode ::placeholder {
+  color: #cccccc !important; /* Placeholder mais claro */
+  opacity: 1; /* Garantir que a cor seja aplicada */
+}
+
+/* Foco nos elementos de formulário */
+.dark-mode input[type="text"]:focus,
+.dark-mode input[type="number"]:focus,
+.dark-mode input[type="email"]:focus,
+.dark-mode input[type="password"]:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus,
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+  background-color: #555555 !important; /* Fundo um pouco mais claro no foco */
+  color: #ffffff !important;            /* Texto branco no foco */
+  border-color: #888888 !important;     /* Borda mais clara no foco */
+  box-shadow: 0 0 5px rgba(136, 136, 136, 0.5) !important; /* Sombra suave */
+}
+
+/* Desabilitado */
+.dark-mode input[disabled],
+.dark-mode textarea[disabled],
+.dark-mode select[disabled],
+.dark-mode .form-control[disabled],
+.dark-mode .form-select[disabled] {
+  background-color: #333333 !important; /* Fundo ainda mais escuro */
+  color: #888888 !important;            /* Texto desativado */
+  border: 1px solid #555555 !important; /* Borda desativada */
+  cursor: not-allowed !important;       /* Cursor de não permitido */
+}
+
+/* Radio buttons e checkboxes no modo escuro */
+.dark-mode .form-check-input[type="radio"] {
+  accent-color: #28a745 !important; /* Cor personalizada para radio buttons */
+}
+
+.dark-mode .form-check-input[type="checkbox"] {
+  accent-color: #28a745 !important; /* Cor personalizada para checkboxes */
+}
+
+/* Botões dentro de formulários */
+.dark-mode .btn-primary {
+  background-color: #375a7f !important;
+  border-color: #375a7f !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .btn-secondary {
+  background-color: #444444 !important;
+  border-color: #444444 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .btn-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #ffffff !important;
+}
+
+/* Ajuste global para textos em formulários */
+.dark-mode label,
+.dark-mode .form-label,
+.dark-mode .form-check-label {
+  color: #e2e2e2 !important; /* Cor dos labels */
+}
+
+/* Radio buttons e checkboxes */
+.dark-mode .form-check-input {
+  background-color: #444444 !important;
+  border-color: #666666 !important;
+}
+
+/* =========================
+   Outros Ajustes de Modo Escuro
+   ========================= */
+
+/* Modal Conteúdo */
+.dark-mode .modal-content {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+.dark-mode .modal-header,
+.dark-mode .modal-body,
+.dark-mode .modal-footer {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+.dark-mode .modal-header .modal-title {
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-body a {
+  color: #66b2ff !important;
+}
+
+.dark-mode .modal-content .form-control,
+.dark-mode .modal-content .form-select {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+  border-color: #666666 !important;
+}
+
+.dark-mode .modal-content .form-control:focus,
+.dark-mode .modal-content .form-select:focus {
+  background-color: #555555 !important;
+  color: #ffffff !important;
+  border-color: #777777 !important;
+}
+
+.dark-mode .modal-content .btn-primary {
+  background-color: #375a7f !important;
+  border-color: #375a7f !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .btn-secondary {
+  background-color: #444444 !important;
+  border-color: #444444 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .btn-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .spinner-border,
+.dark-mode .modal-content .spinner-grow {
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content .alert {
+  background-color: #721c24 !important;
+  color: #f8d7da !important;
+  border-color: #f5c6cb !important;
+}
+
+.dark-mode .modal-content table th {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content table tr {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .print-content {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+}
+
+/* =========================
+   Outros Estilos de Modo Escuro
+   ========================= */
+
+/* Tabelas */
+.dark-mode table {
+  background-color: #444 !important;
+  color: #fff !important;
+  border-color: #666 !important;
+}
+
+.dark-mode thead.table-dark {
+  background-color: #555 !important;
+  color: #fff !important;
+}
+
+.dark-mode tbody tr {
+  border-color: #666 !important;
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #555 !important;
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(even) {
+  background-color: #444 !important;
+}
+
+.dark-mode .table-bordered {
+  border: 1px solid #666 !important;
+}
+
+.dark-mode .table-bordered td,
+.dark-mode .table-bordered th {
+  border: 1px solid #666 !important;
+  background-color: #2b2b2b !important;
+}
+
+.dark-mode .table-hover tbody tr:hover {
+  background-color: #666 !important;
+  color: #fff !important;
+}
+
+/* Tabelas específicas com combinação de classes */
+.dark-mode table.table.table-striped.table-bordered.table-hover {
+  background-color: #444 !important;
+  color: #fff !important;
+  border-color: #666 !important;
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:nth-of-type(odd) {
+  background-color: #555 !important;
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:nth-of-type(even) {
+  background-color: #444 !important;
+}
+
+.dark-mode table.table-striped.table-bordered.table-hover tbody tr:hover {
+  background-color: #666 !important;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: #444 !important;
+  color: #fff !important;
+  border-color: #666 !important;
+}
+
+/* =========================
+   Layout Responsivo para Modo Escuro
+   ========================= */
+
+@media (max-width: 768px) {
+  .sidebar.collapsed .main-content {
+    margin-left: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  /* Ajustes específicos para elementos de formulário no modo escuro em telas menores */
+  .dark-mode input[type="text"],
+  .dark-mode input[type="number"],
+  .dark-mode input[type="email"],
+  .dark-mode input[type="password"],
+  .dark-mode textarea,
+  .dark-mode select,
+  .dark-mode .form-control,
+  .dark-mode .form-select,
+  .dark-mode .form-check-input {
+    width: 100% !important; /* Garantir que os campos ocupem a largura total */
+  }
+}
